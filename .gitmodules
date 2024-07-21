@@ -1,0 +1,6 @@
+[submodule "src/client_server_shared"]
+	path = src/client_server_shared
+	url = git@github.com:cube-connect/client_server_shared.git
+[submodule "clang_formatting"]
+	path = clang_formatting
+	url = git@github.com:cpp-toolbox/clang_formatting.git
