@@ -9,3 +9,15 @@ Our next step is to:
            need to install other packages. GLFW, GLM, etc.
 2. Server: Looking at the cube_connect code and extracting what needs to go on
            the server. Use the drawing_snapshot.hpp to help figure that out.
+
+
+7/07/24
+We copy pasted the cube_connect code into the client and server repos. We added
+a network loop with ENet and began refactoring the app to use data sent/received
+over the network.
+
+For client:
+* implemented matrices for cubies and camera (NetworkDraw for Drawables)
+* TODO: text for TextRenderer (NetworkDraw for IWidget)
+* TODO: send over InputSnapshot after populating with keypresses/mouse (potential idea
+  in comments in Input.cpp)

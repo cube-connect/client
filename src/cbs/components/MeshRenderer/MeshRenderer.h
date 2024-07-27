@@ -36,6 +36,7 @@ public:
     void Destroy() override;
 
     void Draw(const ShaderProgram &shader) const override;
+    void NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const override;
 
     const std::vector<Mesh>& Meshes() const { return m_Meshes; }
 

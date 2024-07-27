@@ -13,6 +13,7 @@ public:
     Drawable* operator=(Drawable&&) = delete;
 
     virtual void Draw(const ShaderProgram &shader) const = 0;
+    virtual void NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const = 0;
 
     ShaderProgram::Type ShaderType() const { return m_ShaderType; }
     void ShaderType(ShaderProgram::Type type) { m_ShaderType = type; }

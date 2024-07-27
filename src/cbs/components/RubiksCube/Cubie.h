@@ -27,6 +27,7 @@ public:
     ~Cubie();
 
     void Draw(const ShaderProgram& shader) const override;
+    void NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const override;
 
     void RotateAround(float angle, glm::vec3 axis);
     void RotationAround(float angle, glm::vec3 axis);

@@ -18,6 +18,7 @@
 #include <assert.h>
 #include <memory>
 
+#include "drawing_snapshot.hpp"
 
 class Camera;
 class Drawable;
@@ -46,6 +47,7 @@ public:
     void UnregisterLightSource(ILightSource* light_source);
 
     void CallDraws() const;
+    void NetworkCallDraws(DrawingSnapshot *drawing_snapshot) const;
 
 private:
     glm::vec3 m_Background{ 0.0f };

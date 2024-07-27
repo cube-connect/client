@@ -18,6 +18,7 @@ public:
     void Destroy() override;
 
     void Draw() const override;
+    void NetworkDraw(std::string text) const override;
 
     void Font(const std::string& path, float size);
     void Position(glm::vec2 offset, EAlign horizontal, EAlign vertical);

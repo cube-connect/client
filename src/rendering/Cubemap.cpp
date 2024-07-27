@@ -16,6 +16,17 @@ void Cubemap::Draw(const ShaderProgram& shader) const {
     glBindVertexArray(0);
 }
 
+// duplicated
+void Cubemap::NetworkDraw(const ShaderProgram& shader, glm::mat4 local_to_world) const {
+    shader.Uniform("skybox", 0);
+    
+    glBindVertexArray(m_VAO);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glBindVertexArray(0);
+}
+
 void Cubemap::m_Load(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front) {
     glGenTextures(1, &m_ID);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);

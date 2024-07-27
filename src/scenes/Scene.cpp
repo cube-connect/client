@@ -1,4 +1,8 @@
 #include "Scene.h"
+#include <enet/enet.h>
+
+#include "drawing_snapshot.hpp"
+#include "input_snapshot.hpp"
 
 #include "../rendering/Drawable.h"
 #include "../rendering/ILightSource.h"
@@ -15,6 +19,38 @@ void MyScene::Run() {
     // to avoid misrepresented delta time
     g_Time.Initialize();
     
+    // set up connection to server
+    if (enet_initialize() != 0) {
+        throw std::runtime_error("An error occurred while initializing ENet.");
+    }
+    atexit(enet_deinitialize);
+
+    ENetHost* client = enet_host_create(nullptr, 1, 2, 0, 0);
+    if (client == nullptr) {
+        throw std::runtime_error("An error occurred while trying to create an ENet client host.");
+    }
+
+    ENetAddress address;
+    ENetEvent event;
+    ENetPeer* peer;
+
+    // TODO: make arguments to program
+    enet_address_set_host(&address, "localhost:1234");
+    address.port = 7777; 
+
+    peer = enet_host_connect(client, &address, 2, 0);
+    if (peer == nullptr) {
+        throw std::runtime_error("No available peers for initiating an ENet connection.");
+    }
+
+    if (enet_host_service(client, &event, 5000) > 0 &&
+        event.type == ENET_EVENT_TYPE_CONNECT) {
+        std::cout << "Connection to server succeeded.\n";
+    } else {
+        enet_peer_reset(peer);
+        throw std::runtime_error("Connecting to server failed.");
+    }
+
     // Game loop
     while (m_Running && !glfwWindowShouldClose(g_Window)) {
         // If frame rate is greater than limit then wait
@@ -27,9 +63,33 @@ void MyScene::Run() {
         g_Time.Update();
         g_Input.Update(g_Window);
         
-        // Managers
-        m_ObjectManager.ProcessFrame();
-        m_DrawManager.CallDraws();
+        while (enet_host_service(client, &event, m_FrameRateLimit) > 0) {
+            switch (event.type) {
+                case ENET_EVENT_TYPE_RECEIVE:
+                    DrawingSnapshot drawing_snapshot;
+                    memcpy(&drawing_snapshot, &event.packet->data, sizeof(DrawingSnapshot));
+                    m_DrawManager.NetworkCallDraws(&drawing_snapshot);
+                    enet_packet_destroy(event.packet);
+                    break;
+
+                case ENET_EVENT_TYPE_DISCONNECT:
+                    std::cout << event.peer->data << " disconnected.\n";
+                    event.peer->data = nullptr;
+                    Exit();
+                    break;
+            }
+        }
+
+        InputSnapshot input_snapshot;
+        // TODO: populate input_snapshot and text
+
+        ENetPacket* packet = enet_packet_create((void *)&input_snapshot, sizeof(InputSnapshot), ENET_PACKET_FLAG_RELIABLE);
+        enet_peer_send(peer, 0, packet);
+
+        enet_host_flush(server);
+
+        // m_ObjectManager.ProcessFrame(); 
+        // m_DrawManager.CallDraws();
     }
 }
 

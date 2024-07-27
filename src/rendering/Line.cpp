@@ -45,6 +45,17 @@ void Line::Draw(const ShaderProgram &shader) const {
     glBindVertexArray(0);
 }
 
+// duplicated
+void Line::NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const override {
+    glm::mat4 model(1.0f);
+    shader.Uniform("model", model);
+    shader.Uniform("color", m_Color);
+
+    glBindVertexArray(m_VAO);
+    glDrawArrays(GL_LINES, 0, 6);
+    glBindVertexArray(0);
+}
+
 void Line::SetupLine() {
     GLfloat vertices[] = { m_Start.x, m_Start.y, m_Start.z, m_End.x, m_End.y, m_End.z };
     

@@ -15,6 +15,7 @@ public:
     Cubemap(const std::string& right, const std::string& left, const std::string& top, const std::string& bottom, const std::string& back, const std::string& front, ShaderProgram::Type type);
     
     void Draw(const ShaderProgram& shader) const override;
+    void NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const override;
     
 private:
     unsigned int m_ID;

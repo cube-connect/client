@@ -11,6 +11,7 @@ public:
     ~Line();
 
     void Draw(const ShaderProgram& shader) const override;
+    void NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const override;
 
     const glm::vec3& Start() const { return m_Start; }
 

@@ -45,8 +45,25 @@ void Input::Update(GLFWwindow *window) {
         }
     }
 
+// iterate through this instead of all keys
+// std::unordered_map<int, bool> key_state_map = {
+//                 {GLFW_KEY_F, &input_snapshot.f_pressed}, <--- *pressed = (glfwGetKey(window, key) == GLFW_PRESSED)
+//                 {GLFW_KEY_B, input_snapshot.b_pressed},
+//                 {GLFW_KEY_R, input_snapshot.r_pressed},
+//                 {GLFW_KEY_L, input_snapshot.l_pressed},
+//                 {GLFW_KEY_U, input_snapshot.u_pressed},
+//                 {GLFW_KEY_D, input_snapshot.d_pressed},
+//                 {GLFW_KEY_LEFT_SHIFT, input_snapshot.shift_pressed},
+//                 {GLFW_MOUSE_BUTTON_LEFT, input_snapshot.left_mouse_button_pressed},
+//                 {GLFW_MOUSE_BUTTON_RIGHT, input_snapshot.right_mouse_button_pressed},
+//         };
+//
+// for (const auto& [key, pressed] : key_state_map) {
+
     // Keyboard buttons
     for (int i = GLFW_KEY_SPACE; i < GLFW_KEY_MENU + 1; ++i) {
+        // 
+
         if (glfwGetKey(window, i) == GLFW_PRESS) {
             if (m_Keys[i] == EKeyState::FREE || m_Keys[i] == EKeyState::RELEASED) {
                 m_Keys[i] = EKeyState::PRESSED;

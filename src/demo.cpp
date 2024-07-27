@@ -54,7 +54,11 @@ int main(int argc, char** argv) {
     // Event loop
     bool running = true;
     while (running) {
-        while (enet_host_service(client, &event, 1000) > 0) {
+        // on each iteration of this outer while loop, the buffer of packets will be empty by the end?
+        // practically, the time would be 1 / freq per iteration
+        // if client and server freqs are the same, it'll be about 1 packet per iteration
+
+        while (enet_host_service(client, &event, 0) > 0) { // send and receive
             switch (event.type) {
                 case ENET_EVENT_TYPE_RECEIVE:
                     std::cout << "A packet of length "
@@ -76,6 +80,17 @@ int main(int argc, char** argv) {
                     break;
             }
         }
+
+        // Send data to all connected peers at the end of the service loop
+        const char* message = "Server message at the end of the service loop";
+        ENetPacket* packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
+
+        enet_peer_send(peer, 0, packet);
+
+
+        enet_host_flush(server);
+
+        // sleep
     }
 
     enet_host_destroy(client);

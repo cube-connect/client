@@ -157,3 +157,77 @@ void DrawManager::CallDraws() const {
     // End of drawing
     glfwSwapBuffers(g_Window);
 }
+
+void DrawManager::NetworkCallDraws(DrawingSnapshot *drawing_snapshot) const {
+    glClearColor(m_Background.x, m_Background.y, m_Background.z, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // glm::mat4 pv = m_Camera->Projection() * m_Camera->ViewMatrix();
+    glm::mat4 world_to_camera = glm::make_mat4(drawing_snapshot->world_to_camera);
+    glm::mat4 camera_to_clip = glm::make_mat4(drawing_snapshot->camera_to_clip);
+
+    glm::mat4 pv = camera_to_clip * world_to_camera;
+
+    glm::vec3 *camera_pos = glm::make_vec3(drawing_snapshot->camera_pos);
+
+    // Draw objects
+    unsigned int i = 0;
+    for (auto to_draw = m_Drawables.cbegin(); to_draw != m_Drawables.cend(); to_draw++) {
+        int shader_type = (*to_draw)->ShaderType();
+        const ShaderProgram& curr_shader = m_ShaderPrograms[shader_type];
+
+        curr_shader.Use();
+        curr_shader.Uniform("pv", pv);
+
+        // For each trait in shader set corresponding properties 
+        if (curr_shader.Traits() & ShaderProgram::Trait::LIGHT_RECEIVER) {
+            // curr_shader.Uniform("viewPos", m_Camera->Object().Root().Position());
+            curr_shader.Uniform("viewPos", camera_pos);
+            curr_shader.Uniform("material.shininess", 32.0f);
+
+            for (auto light_source = m_LightSources.begin(); light_source != m_LightSources.end(); ++light_source) {
+                (*light_source)->SetLightProperties(curr_shader);
+            }
+        }
+
+        /**
+         * ASSUMPTION: THIS ONLY WORKS BECAUSE SERVER AND CLIENT ITERATE OVER
+         * DRAWABLES IN THE SAME ORDER
+         */        
+        glm::mat4 local_to_world = glm::make_mat4(local_to_world_matrices[i]);
+        (*to_draw)->NetworkDraw(curr_shader, local_to_world);
+
+        i++;
+    }
+
+    // Draw skybox
+    if (m_Skybox != nullptr) {
+        glDepthFunc(GL_LEQUAL);
+        const ShaderProgram& skybox_shader = m_ShaderPrograms[ShaderProgram::Type::SKYBOX];
+
+        skybox_shader.Use();
+        // skybox_shader.Uniform("pv", m_Camera->Projection() * glm::mat4(glm::mat3(m_Camera->ViewMatrix())));
+        skybox_shader.Uniform("pv", camera_to_clip * glm::mat4(glm::mat3(world_to_camera)));
+
+        m_Skybox->Draw(skybox_shader);
+
+        glDepthFunc(GL_LESS);
+    }
+    
+    // Draw GUI
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    for (auto widget = m_Widgets.begin(); widget != m_Widgets.end(); widget++) {
+        // TODO: pass in text for TextRenderer
+        (*widget)->Draw();
+    }
+
+    ImGui::Render();
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    ImGui::EndFrame();
+
+    // End of drawing
+    glfwSwapBuffers(g_Window);
+}

@@ -1,6 +1,8 @@
 #ifndef IWidget_h
 #define IWidget_h
 
+#include <string>
+
 class IWidget {
 public:
     enum class EAlign {
@@ -18,6 +20,7 @@ public:
     IWidget& operator=(IWidget&&) = delete;
 
     virtual void Draw() const = 0;
+    virtual void NetworkDraw(std::string text) const = 0;
 
 protected:
     template <class T>

@@ -32,6 +32,14 @@ void Cubie::Draw(const ShaderProgram& shader) const {
     glBindVertexArray(0);
 }
 
+void Cube::NetworkDraw(const ShaderProgram& shader, glm::mat4 local_to_world) const {
+    shader.Uniform("model", local_to_world);
+
+    glBindVertexArray(m_VAO);
+    glDrawArrays(GL_TRIANGLES, 0, 396);
+    glBindVertexArray(0);
+}
+
 void Cubie::RotateAround(float angle, glm::vec3 axis) {
     angle = glm::radians(angle);
 

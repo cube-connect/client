@@ -25,6 +25,15 @@ void MeshRenderer::Draw(const ShaderProgram &shader) const {
     }
 }
 
+// duplicated
+void MeshRenderer::NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const {
+    shader.Uniform("model", ModelIn);
+    
+    for (const Mesh &mesh: m_Meshes) {
+        mesh.Draw(shader);
+    }
+}
+
 void MeshRenderer::LoadModel(const std::string& path) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
