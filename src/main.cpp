@@ -1,83 +1,62 @@
+#include "utilities/Time.h"
+#include "utilities/Input.h"
+#include "utilities/Window.h"
+#include "scenes/MainScene.h"
+
+#pragma warning(push, 0)
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 #include <iostream>
-#include <enet/enet.h>
-#include <cstring>
+#include <fstream>
+#pragma warning(pop)
 
-// ./enet_client <server_ip> <message>
-int main(int argc, char** argv) {
-    if (argc != 3) {
-        std::cerr << "Usage: " << argv[0] << " <server_ip> <message>\n";
+// Global objects
+Time g_Time;
+Input g_Input;
+Window g_Window;
+
+int main() {
+    // Initialize OpenGL
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    
+    // Create window
+    g_Window.Initialize(1920, 1080, "Rubik's cube");
+    if (!g_Window) {
+        glfwTerminate();
+        std::cout << "Failed to create GLFW window\n";
         return EXIT_FAILURE;
     }
-
-    const char* server_ip = argv[1];
-    const char* message = argv[2];
-
-    if (enet_initialize() != 0) {
-        std::cerr << "An error occurred while initializing ENet.\n";
+    glfwMakeContextCurrent(g_Window);
+    
+    // Load glad
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Failed to initialize GLAD\n";
         return EXIT_FAILURE;
     }
-    atexit(enet_deinitialize);
-
-    ENetHost* client = enet_host_create(nullptr, 1, 2, 0, 0);
-    if (client == nullptr) {
-        std::cerr << "An error occurred while trying to create an ENet client host.\n";
-        return EXIT_FAILURE;
-    }
-
-    ENetAddress address;
-    ENetEvent event;
-    ENetPeer* peer;
-
-    enet_address_set_host(&address, server_ip);
-    address.port = 7777; // TODO: param 7777
-
-    peer = enet_host_connect(client, &address, 2, 0);
-    if (peer == nullptr) {
-        std::cerr << "No available peers for initiating an ENet connection.\n";
-        return EXIT_FAILURE;
-    }
-
-    if (enet_host_service(client, &event, 5000) > 0 &&
-        event.type == ENET_EVENT_TYPE_CONNECT) {
-        std::cout << "Connection to " << server_ip << ":1234 succeeded.\n";
-    } else {
-        enet_peer_reset(peer);
-        std::cerr << "Connection to " << server_ip << ":1234 failed.\n";
-        return EXIT_FAILURE;
-    }
-
-    // Sending data to the server
-    ENetPacket* packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-    enet_peer_send(peer, 0, packet);
-    enet_host_flush(client);
-
-    // Event loop
-    bool running = true;
-    while (running) {
-        while (enet_host_service(client, &event, 1000) > 0) {
-            switch (event.type) {
-                case ENET_EVENT_TYPE_RECEIVE:
-                    std::cout << "A packet of length "
-                              << event.packet->dataLength
-                              << " containing '"
-                              << event.packet->data
-                              << "' was received from "
-                              << event.peer->data
-                              << " on channel "
-                              << event.channelID
-                              << ".\n";
-                    enet_packet_destroy(event.packet);
-                    break;
-
-                case ENET_EVENT_TYPE_DISCONNECT:
-                    std::cout << event.peer->data << " disconnected.\n";
-                    event.peer->data = nullptr;
-                    running = false;
-                    break;
-            }
-        }
-    }
-
-    enet_host_destroy(client);
+    
+    // Set callbacks
+    glfwSetFramebufferSizeCallback(g_Window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(g_Window, mouse_callback);
+    glfwSetScrollCallback(g_Window, scroll_callback);
+    
+    // Main scene
+    MainScene main_scene;
+    main_scene.PreRun();
+    main_scene.CreateScene();
+    // calling run starts the game loop
+    main_scene.Run();
+    main_scene.PostRun();
+    
+    // End of application
+    glfwSetWindowShouldClose(g_Window, true);
+    glfwTerminate();
     return EXIT_SUCCESS;
 }
