@@ -194,7 +194,7 @@ void DrawManager::NetworkCallDraws(DrawingSnapshot *drawing_snapshot) const {
          * ASSUMPTION: THIS ONLY WORKS BECAUSE SERVER AND CLIENT ITERATE OVER
          * DRAWABLES IN THE SAME ORDER
          */        
-        glm::mat4 local_to_world = glm::make_mat4(drawing_snapshot->local_to_world_matrices[i].data());
+        glm::mat4 local_to_world = glm::make_mat4((drawing_snapshot->local_to_world_matrices[i]).data());
         (*to_draw)->NetworkDraw(curr_shader, local_to_world);
 
         i++;

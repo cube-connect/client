@@ -71,7 +71,7 @@ void MyScene::Run() {
                 case ENET_EVENT_TYPE_RECEIVE:
                 {
                     DrawingSnapshot drawing_snapshot;
-                    memcpy(&drawing_snapshot, &event.packet->data, sizeof(DrawingSnapshot));
+                    memcpy(&drawing_snapshot, event.packet->data, sizeof(DrawingSnapshot));
                     m_DrawManager.NetworkCallDraws(&drawing_snapshot);
                     enet_packet_destroy(event.packet);
                 }
@@ -85,9 +85,9 @@ void MyScene::Run() {
                     break;
             }
         }
-        
+
         // TODO: populate text
-        ENetPacket* packet = enet_packet_create((void *)&input_snapshot, sizeof(InputSnapshot), ENET_PACKET_FLAG_RELIABLE);
+        ENetPacket* packet = enet_packet_create(&input_snapshot, sizeof(InputSnapshot), ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(peer, 0, packet);
 
         enet_host_flush(client);
