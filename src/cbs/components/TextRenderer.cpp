@@ -44,7 +44,7 @@ void TextRenderer::Draw() const {
     ImGui::End();
 }
 
-void NetworkDraw(std::string text) const {
+void TextRenderer::NetworkDraw(std::string text) const {
     ImGui::Begin("dummy", nullptr, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::PushFont(m_Font);
 

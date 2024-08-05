@@ -6,6 +6,8 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+
+#include "input_snapshot.hpp"
 #pragma warning(pop)
 
 class Input {
@@ -24,6 +26,7 @@ public:
     };
 
     void Update(GLFWwindow *window);
+    InputSnapshot NetworkUpdate(GLFWwindow *window);
 
     bool AnyKeyPressed() const { return m_AnyKeyPressed; }
     bool AnyKeyHold() const { return m_AnyKeyHold; }

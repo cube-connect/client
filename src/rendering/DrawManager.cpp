@@ -163,12 +163,12 @@ void DrawManager::NetworkCallDraws(DrawingSnapshot *drawing_snapshot) const {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // glm::mat4 pv = m_Camera->Projection() * m_Camera->ViewMatrix();
-    glm::mat4 world_to_camera = glm::make_mat4(drawing_snapshot->world_to_camera);
-    glm::mat4 camera_to_clip = glm::make_mat4(drawing_snapshot->camera_to_clip);
+    glm::mat4 world_to_camera = glm::make_mat4(drawing_snapshot->world_to_camera.data());
+    glm::mat4 camera_to_clip = glm::make_mat4(drawing_snapshot->camera_to_clip.data());
 
     glm::mat4 pv = camera_to_clip * world_to_camera;
 
-    glm::vec3 *camera_pos = glm::make_vec3(drawing_snapshot->camera_pos);
+    glm::vec3 camera_pos = glm::make_vec3(drawing_snapshot->camera_pos.data());
 
     // Draw objects
     unsigned int i = 0;
@@ -194,7 +194,7 @@ void DrawManager::NetworkCallDraws(DrawingSnapshot *drawing_snapshot) const {
          * ASSUMPTION: THIS ONLY WORKS BECAUSE SERVER AND CLIENT ITERATE OVER
          * DRAWABLES IN THE SAME ORDER
          */        
-        glm::mat4 local_to_world = glm::make_mat4(local_to_world_matrices[i]);
+        glm::mat4 local_to_world = glm::make_mat4(drawing_snapshot->local_to_world_matrices[i].data());
         (*to_draw)->NetworkDraw(curr_shader, local_to_world);
 
         i++;

@@ -45,21 +45,6 @@ void Input::Update(GLFWwindow *window) {
         }
     }
 
-// iterate through this instead of all keys
-// std::unordered_map<int, bool> key_state_map = {
-//                 {GLFW_KEY_F, &input_snapshot.f_pressed}, <--- *pressed = (glfwGetKey(window, key) == GLFW_PRESSED)
-//                 {GLFW_KEY_B, input_snapshot.b_pressed},
-//                 {GLFW_KEY_R, input_snapshot.r_pressed},
-//                 {GLFW_KEY_L, input_snapshot.l_pressed},
-//                 {GLFW_KEY_U, input_snapshot.u_pressed},
-//                 {GLFW_KEY_D, input_snapshot.d_pressed},
-//                 {GLFW_KEY_LEFT_SHIFT, input_snapshot.shift_pressed},
-//                 {GLFW_MOUSE_BUTTON_LEFT, input_snapshot.left_mouse_button_pressed},
-//                 {GLFW_MOUSE_BUTTON_RIGHT, input_snapshot.right_mouse_button_pressed},
-//         };
-//
-// for (const auto& [key, pressed] : key_state_map) {
-
     // Keyboard buttons
     for (int i = GLFW_KEY_SPACE; i < GLFW_KEY_MENU + 1; ++i) {
         // 
@@ -92,6 +77,25 @@ void Input::Update(GLFWwindow *window) {
         m_ScrollOffset = 0.0f;
     }
     m_ScrollChanged = false;
+}
+
+InputSnapshot Input::NetworkUpdate(GLFWwindow *window) {
+    InputSnapshot input_snapshot;
+    input_snapshot.f_pressed = glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS;
+    input_snapshot.b_pressed = glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS;
+    input_snapshot.r_pressed = glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS;
+    input_snapshot.l_pressed = glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS;
+    input_snapshot.u_pressed = glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS;
+    input_snapshot.d_pressed = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+    input_snapshot.shift_pressed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
+
+    input_snapshot.left_mouse_button_pressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+    input_snapshot.right_mouse_button_pressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+
+    input_snapshot.mouse_position_x = m_MousePosition.x;
+    input_snapshot.mouse_position_y = m_MousePosition.y;
+
+    return input_snapshot;
 }
 
 bool Input::KeyPressed(int glfw_key_enum) const {

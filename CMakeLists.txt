@@ -35,6 +35,7 @@ find_package(glm)
 find_package(assimp)
 find_package(stb)
 find_package(imgui)
+find_package(enet)
 
 # adds the actual code files
 add_subdirectory(src)

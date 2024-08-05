@@ -81,6 +81,6 @@ set(HEADERS
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
-target_link_libraries(${PROJECT_NAME} glfw glad::glad glm::glm assimp::assimp stb::stb imgui::imgui)
+target_link_libraries(${PROJECT_NAME} glfw glad::glad glm::glm assimp::assimp stb::stb imgui::imgui enet::enet)
 target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src)
-target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/client_server_shared)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_SOURCE_DIR}/src/client_server_shared)

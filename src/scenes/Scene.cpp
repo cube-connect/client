@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include <enet/enet.h>
 
+#include <iostream>
+
 #include "drawing_snapshot.hpp"
 #include "input_snapshot.hpp"
 
@@ -62,31 +64,44 @@ void MyScene::Run() {
         // Update global systems
         g_Time.Update();
         g_Input.Update(g_Window);
+        InputSnapshot input_snapshot = g_Input.NetworkUpdate(g_Window);
         
         while (enet_host_service(client, &event, m_FrameRateLimit) > 0) {
             switch (event.type) {
                 case ENET_EVENT_TYPE_RECEIVE:
+                {
                     DrawingSnapshot drawing_snapshot;
                     memcpy(&drawing_snapshot, &event.packet->data, sizeof(DrawingSnapshot));
                     m_DrawManager.NetworkCallDraws(&drawing_snapshot);
                     enet_packet_destroy(event.packet);
+                }
                     break;
-
                 case ENET_EVENT_TYPE_DISCONNECT:
+                {
                     std::cout << event.peer->data << " disconnected.\n";
                     event.peer->data = nullptr;
                     Exit();
+                }
                     break;
             }
         }
 
-        InputSnapshot input_snapshot;
-        // TODO: populate input_snapshot and text
+        std::cout << " F: " << input_snapshot.f_pressed;
+        std::cout << " B: " << input_snapshot.b_pressed;
+        std::cout << " R: " << input_snapshot.r_pressed;
+        std::cout << " L: " << input_snapshot.l_pressed;
+        std::cout << " U: " << input_snapshot.u_pressed;
+        std::cout << " D: " << input_snapshot.d_pressed;
+        std::cout << " ML: " << input_snapshot.left_mouse_button_pressed;
+        std::cout << " MR: " << input_snapshot.right_mouse_button_pressed;
+        std::cout << " Mx: " << input_snapshot.mouse_position_x;
+        std::cout << " My: " << input_snapshot.mouse_position_y << '\n';
 
+        // TODO: populate text
         ENetPacket* packet = enet_packet_create((void *)&input_snapshot, sizeof(InputSnapshot), ENET_PACKET_FLAG_RELIABLE);
         enet_peer_send(peer, 0, packet);
 
-        enet_host_flush(server);
+        enet_host_flush(client);
 
         // m_ObjectManager.ProcessFrame(); 
         // m_DrawManager.CallDraws();

@@ -32,7 +32,7 @@ void Cubie::Draw(const ShaderProgram& shader) const {
     glBindVertexArray(0);
 }
 
-void Cube::NetworkDraw(const ShaderProgram& shader, glm::mat4 local_to_world) const {
+void Cubie::NetworkDraw(const ShaderProgram& shader, glm::mat4 local_to_world) const {
     shader.Uniform("model", local_to_world);
 
     glBindVertexArray(m_VAO);

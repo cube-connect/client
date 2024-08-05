@@ -46,7 +46,7 @@ void Line::Draw(const ShaderProgram &shader) const {
 }
 
 // duplicated
-void Line::NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const override {
+void Line::NetworkDraw(const ShaderProgram &shader, glm::mat4 local_to_world) const {
     glm::mat4 model(1.0f);
     shader.Uniform("model", model);
     shader.Uniform("color", m_Color);
