@@ -56,21 +56,23 @@ void MyScene::Run() {
     // Get client ID assigned by server
     unsigned int client_id{};
     bool is_assigned = false;
-    while (enet_host_service(client, &event, m_FrameRateLimit) > 0 && !is_assigned) {
-        switch (event.type) {
-            case ENET_EVENT_TYPE_RECEIVE:
-            {
-                memcpy(&client_id, event.packet->data, sizeof(unsigned int));
-                is_assigned = true;
+    while (!is_assigned) {
+        while (enet_host_service(client, &event, m_FrameRateLimit) > 0 && !is_assigned) {
+            switch (event.type) {
+                case ENET_EVENT_TYPE_RECEIVE:
+                {
+                    memcpy(&client_id, event.packet->data, sizeof(unsigned int));
+                    is_assigned = true;
+                }
+                    break;
+                case ENET_EVENT_TYPE_DISCONNECT:
+                {
+                    std::cout << event.peer->data << " disconnected.\n";
+                    event.peer->data = nullptr;
+                    Exit();
+                }
+                    break;
             }
-                break;
-            case ENET_EVENT_TYPE_DISCONNECT:
-            {
-                std::cout << event.peer->data << " disconnected.\n";
-                event.peer->data = nullptr;
-                Exit();
-            }
-                break;
         }
     }
 
@@ -87,6 +89,8 @@ void MyScene::Run() {
         g_Input.Update(g_Window);
         InputSnapshot input_snapshot = g_Input.NetworkUpdate(g_Window);
         input_snapshot.client_id = client_id;
+
+        // std::cout << input_snapshot.enter_pressed << ' ' << input_snapshot.shift_pressed << std::endl;
 
         while (enet_host_service(client, &event, m_FrameRateLimit) > 0) {
             switch (event.type) {
