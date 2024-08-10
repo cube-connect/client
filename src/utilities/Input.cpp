@@ -88,6 +88,7 @@ InputSnapshot Input::NetworkUpdate(GLFWwindow *window) {
     input_snapshot.u_pressed = glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS;
     input_snapshot.d_pressed = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
     input_snapshot.shift_pressed = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
+    input_snapshot.enter_pressed = glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS;
 
     input_snapshot.left_mouse_button_pressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     input_snapshot.right_mouse_button_pressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;

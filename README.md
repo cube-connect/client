@@ -31,7 +31,16 @@ TODO:
 * TextRenderer
 * (later) simplify codebase
 
+while loop -> request ID
+server sends back struct
+THEN start sending normal packets
 
+Clients should have an ID (token based)
+SHIFT + ENTER to request admin status (toggle)
+in_charge = -1
+in_charge = ID (until toggle from that client)
+
+TODO: send back current admin from server (then don't send data)
 
 
 

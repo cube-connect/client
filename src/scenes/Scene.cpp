@@ -53,6 +53,27 @@ void MyScene::Run() {
         throw std::runtime_error("Connecting to server failed.");
     }
 
+    // Get client ID assigned by server
+    unsigned int client_id{};
+    bool is_assigned = false;
+    while (enet_host_service(client, &event, m_FrameRateLimit) > 0 && !is_assigned) {
+        switch (event.type) {
+            case ENET_EVENT_TYPE_RECEIVE:
+            {
+                memcpy(&client_id, event.packet->data, sizeof(unsigned int));
+                is_assigned = true;
+            }
+                break;
+            case ENET_EVENT_TYPE_DISCONNECT:
+            {
+                std::cout << event.peer->data << " disconnected.\n";
+                event.peer->data = nullptr;
+                Exit();
+            }
+                break;
+        }
+    }
+
     // Game loop
     while (m_Running && !glfwWindowShouldClose(g_Window)) {
         // If frame rate is greater than limit then wait
@@ -65,7 +86,8 @@ void MyScene::Run() {
         g_Time.Update();
         g_Input.Update(g_Window);
         InputSnapshot input_snapshot = g_Input.NetworkUpdate(g_Window);
-        
+        input_snapshot.client_id = client_id;
+
         while (enet_host_service(client, &event, m_FrameRateLimit) > 0) {
             switch (event.type) {
                 case ENET_EVENT_TYPE_RECEIVE:
