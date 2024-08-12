@@ -7,7 +7,7 @@
 
 #include <glm/glm.hpp>
 
-#include "input_snapshot.hpp"
+#include "../client_server_shared/input_snapshot.hpp"
 #pragma warning(pop)
 
 class Input {

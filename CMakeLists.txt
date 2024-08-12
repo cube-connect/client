@@ -1,32 +1,21 @@
-# cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.10)
+project(client VERSION 0.1)
 
-# project(cc_client VERSION 1.0)
+# Enable JSON compilation database generation
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# # Set C++ standard to C++20
-# set(CMAKE_CXX_STANDARD 20)
-# set(CMAKE_CXX_STANDARD_REQUIRED True)
-# set(CMAKE_CXX_EXTENSIONS OFF)
+file(GLOB_RECURSE SOURCES "src/*.cpp")
 
-# add_executable(${PROJECT_NAME} src/demo.cpp)
+# Add the main executable
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-# find_package(enet)
-# target_link_libraries(${PROJECT_NAME} enet::enet)
+add_custom_target(copy_resources ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/resources
+        ${PROJECT_BINARY_DIR}/resources
+        COMMENT "Copying resources into binary directory")
 
-
-
-cmake_minimum_required(VERSION 3.15)
-project(cube_connect)
-
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-set(BUILD_SHARED_LIBS OFF)
-set(CMAKE_EXE_LINKER_FLAGS "-static")
-
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
-
-# Include the directories from the dependencies
-# include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
+add_dependencies(${PROJECT_NAME} copy_resources)
 
 # Link libraries
 find_package(glfw3)
@@ -37,5 +26,4 @@ find_package(stb)
 find_package(imgui)
 find_package(enet)
 
-# adds the actual code files
-add_subdirectory(src)
+target_link_libraries(${PROJECT_NAME} glfw glad::glad glm::glm assimp::assimp stb::stb imgui::imgui enet::enet)

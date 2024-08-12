@@ -3,8 +3,8 @@
 
 #include <iostream>
 
-#include "drawing_snapshot.hpp"
-#include "input_snapshot.hpp"
+#include "../client_server_shared/drawing_snapshot.hpp"
+#include "../client_server_shared/input_snapshot.hpp"
 
 #include "../rendering/Drawable.h"
 #include "../rendering/ILightSource.h"
@@ -37,7 +37,8 @@ void MyScene::Run() {
     ENetPeer* peer;
 
     // TODO: make arguments to program
-    enet_address_set_host(&address, "localhost");
+    // enet_address_set_host(&address, "localhost");
+    enet_address_set_host(&address, "104.131.10.102");
     address.port = 7777; 
 
     peer = enet_host_connect(client, &address, 2, 0);

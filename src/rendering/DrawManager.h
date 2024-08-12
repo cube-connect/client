@@ -5,9 +5,9 @@
 #include "Cubemap.h"
 
 #pragma warning(push, 0)
-#include "dependencies/imgui/imconfig.h"
-#include "dependencies/imgui/imgui_impl_opengl3.h"
-#include "dependencies/imgui/imgui_impl_glfw.h"
+#include "../dependencies/imgui/imconfig.h"
+#include "../dependencies/imgui/imgui_impl_glfw.h"
+#include "../dependencies/imgui/imgui_impl_opengl3.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -18,7 +18,7 @@
 #include <assert.h>
 #include <memory>
 
-#include "drawing_snapshot.hpp"
+#include "../client_server_shared/drawing_snapshot.hpp"
 
 class Camera;
 class Drawable;

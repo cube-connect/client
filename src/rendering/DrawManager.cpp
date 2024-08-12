@@ -21,21 +21,18 @@ void DrawManager::Initialize() {
     io.Fonts->AddFontDefault();
 
     // Create shader programs
-    m_ShaderPrograms[ShaderProgram::Type::PURE_COLOR].AttachShaders("src/shaders/PURE_COLOR.vert",
-                                                                    "src/shaders/PURE_COLOR.frag");
+    m_ShaderPrograms[ShaderProgram::Type::PURE_COLOR].AttachShaders("resources/shaders/PURE_COLOR.vert",
+                                                                    "resources/shaders/PURE_COLOR.frag");
 
+    m_ShaderPrograms[ShaderProgram::Type::PURE_TEXTURE].AttachShaders("resources/shaders/PURE_TEXTURE.vert",
+                                                                      "resources/shaders/PURE_TEXTURE.frag");
 
-    m_ShaderPrograms[ShaderProgram::Type::PURE_TEXTURE].AttachShaders("src/shaders/PURE_TEXTURE.vert",
-                                                                      "src/shaders/PURE_TEXTURE.frag");
-
-
-    m_ShaderPrograms[ShaderProgram::Type::PHONG].AttachShaders("src/shaders/PHONG.vert",
-                                                               "src/shaders/PHONG.frag");
+    m_ShaderPrograms[ShaderProgram::Type::PHONG].AttachShaders("resources/shaders/PHONG.vert",
+                                                               "resources/shaders/PHONG.frag");
     m_ShaderPrograms[ShaderProgram::Type::PHONG].Traits(ShaderProgram::Trait::LIGHT_RECEIVER);
 
-
-    m_ShaderPrograms[ShaderProgram::Type::SKYBOX].AttachShaders("src/shaders/SKYBOX.vert",
-                                                                "src/shaders/SKYBOX.frag");
+    m_ShaderPrograms[ShaderProgram::Type::SKYBOX].AttachShaders("resources/shaders/SKYBOX.vert",
+                                                                "resources/shaders/SKYBOX.frag");
 
     glEnable(GL_DEPTH_TEST);
 }
